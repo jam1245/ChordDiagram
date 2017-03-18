@@ -1,0 +1,82 @@
+---
+title: "Metrorail Chord Diagram"
+author: "John"
+date: "March 18, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Quick overview on how to create a Chord Diagram. In this example we'll use data from Metrorail in Washington D.C.
+
+Metro provides a number of different data sets on their website here: https://planitmetro.com/data
+
+For this example you need data with an origin and a destination. Chord Diagrams are also famous for showing migration patterns between countries. Let's now get to the code.
+
+For this Chord Diagram we're going to use R and the D3 
+
+Step 1 - read in your datatset
+
+```{r}
+
+library(networkD3)
+library(igraph)
+library(readr)
+
+metro <- read_csv("C:/Users/John/Desktop/Data Science/transportation/metro.csv")
+
+#explore the data a little bit using the summary commands and str commands #str(metro)
+summary(metro)
+
+```
+Step 2 - you need to subset your data a little bit because it will have too many records for the Chord Diagram to work.
+
+There's no magic number here, but start subsetting from the top quartile. Once we get to about 50-70 records, we can produce a manageable Chord Diagram that will show clear connections between boardings and exits.
+```{r}
+metro_sub <- metro[metro$Riders >= 550,]
+```
+Step 3 - organize your columns. In this case 1 represents your origin column and 2 represents your destination (exit) ###column. 3 represents your numeric data, in this case Riders.
+```{r}
+met <- metro_sub[c(1,2,3)]
+```
+
+Step 4 - let's transform things so we're working with a graph.
+```{r}
+nw <- graph.data.frame(met, directed=TRUE)
+```
+
+Step 5 - let's plot the graph and create the an adjacency matrix. The matrix is a key step for making a Chord Diagram
+```{r}
+
+plot(nw, edge.label = E(nw)$Riders)
+```
+
+Time to create our matrix 
+```{r}
+ad <- as_adjacency_matrix(nw,type="both",names=TRUE,sparse=FALSE,attr="Riders");
+V(nw)$name
+```
+
+Step 6 - let's plot our chord diagram.
+```{r}
+
+
+chordNetwork(Data = ad, width = 700, height = 700, fontSize = 14, labels = V(nw)$name, labelDistance = 100)
+
+```
+
+If you have to many or too few connections, go back to step two and adjust your subset to add or subtract how many stations (records) get included in the diagram.
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
