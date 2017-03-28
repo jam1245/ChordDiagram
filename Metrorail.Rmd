@@ -71,12 +71,4 @@ chordNetwork(Data = ad, width = 700, height = 700, fontSize = 14, labels = V(nw)
 
 If you have to many or too few connections, go back to step two and adjust your subset to add or subtract how many stations (records) get included in the diagram.
 
-## Including Plots
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
